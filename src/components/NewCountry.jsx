@@ -6,22 +6,29 @@ import { tc } from "../Utils.js";
 function NewCountry(props) {
   const [showDialog, setShowDialog] = useState(false);
   const [newCountryName, setNewCountryName] = useState("");
+  const [newCountryCode, setNewCountryCode] = useState("");
 
   function hideDialog() {
     setNewCountryName("");
+    setNewCountryCode("");
     setShowDialog(false);
   }
   function handleSave() {
-    if (newCountryName.length > 0) {
-      props.onAdd(newCountryName);
+    const trimmedName = newCountryName.trim();
+    const trimmedCode = newCountryCode.trim().toUpperCase();
+    if (trimmedName.length > 0 && trimmedCode.length > 0) {
+      props.onAdd(trimmedName, trimmedCode);
       hideDialog();
     }
   }
   function handleKeyUp(e) {
     (e.keyCode ? e.keyCode : e.which) === 13 && handleSave();
   }
-  const handleChange = (e) => {
+  const handleNameChange = (e) => {
     setNewCountryName(tc(e.target.value));
+  };
+  const handleCodeChange = (e) => {
+    setNewCountryCode(e.target.value.toUpperCase());
   };
 
   return (
@@ -35,7 +42,7 @@ function NewCountry(props) {
       <Dialog.Content maxWidth="450px">
         <Dialog.Title>Add Country</Dialog.Title>
         <Dialog.Description size="2" mb="4">
-          Enter the country name.
+          Enter the country name and official country code.
         </Dialog.Description>
         <Flex direction="column" gap="3">
           <label>
@@ -45,8 +52,22 @@ function NewCountry(props) {
             <TextField.Root
               name="newCountryName"
               placeholder="Enter the country name"
-              onChange={handleChange}
+              onChange={handleNameChange}
               value={newCountryName}
+              autoComplete="off"
+              onKeyUp={handleKeyUp}
+            />
+          </label>
+          <label>
+            <Text as="div" size="2" mb="1" weight="bold">
+              Country Code
+            </Text>
+            <TextField.Root
+              name="newCountryCode"
+              placeholder="Enter the country code (e.g. US)"
+              maxLength={10}
+              onChange={handleCodeChange}
+              value={newCountryCode}
               autoComplete="off"
               onKeyUp={handleKeyUp}
             />
@@ -54,14 +75,17 @@ function NewCountry(props) {
         </Flex>
         <Flex gap="3" mt="4" justify="end">
           <Dialog.Close>
-            <Button variant="soft" color="gray" onClick={(e) => hideDialog()}>
+            <Button variant="soft" color="gray" onClick={() => hideDialog()}>
               Cancel
             </Button>
           </Dialog.Close>
           <Dialog.Close>
             <Button
               onClick={handleSave}
-              disabled={newCountryName.trim().length === 0}
+              disabled={
+                newCountryName.trim().length === 0 ||
+                newCountryCode.trim().length === 0
+              }
             >
               Save
             </Button>
