@@ -13,26 +13,30 @@ function Medal(props) {
         </Flex>
       </Table.RowHeaderCell>
       <Table.Cell align="right" width="108px">
-        <Flex align="center" justify="between">
-          <Button
-            variant="ghost"
-            disabled={props.country[props.medal.name] === 0}
-          >
-            <MinusIcon
-              onClick={() =>
-                props.country[props.medal.name] > 0 &&
-                props.onDecrement(props.country.id, props.medal.name)
-              }
-            />
-          </Button>
+        <Flex align="center" justify={props.canPatch ? "between" : "center"}>
+          {props.canPatch && (
+            <Button
+              variant="ghost"
+              disabled={props.country[props.medal.name] === 0}
+            >
+              <MinusIcon
+                onClick={() =>
+                  props.country[props.medal.name] > 0 &&
+                  props.onDecrement(props.country.id, props.medal.name)
+                }
+              />
+            </Button>
+          )}
           <Badge variant="outline">{props.country[props.medal.name]}</Badge>
-          <Button variant="ghost">
-            <PlusIcon
-              onClick={() =>
-                props.onIncrement(props.country.id, props.medal.name)
-              }
-            />
-          </Button>
+          {props.canPatch && (
+            <Button variant="ghost">
+              <PlusIcon
+                onClick={() =>
+                  props.onIncrement(props.country.id, props.medal.name)
+                }
+              />
+            </Button>
+          )}
         </Flex>
       </Table.Cell>
     </Table.Row>
